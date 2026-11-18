@@ -47,13 +47,15 @@ import type { AgentScope } from '@operationkit/shared'
 import { requireAuth, type AuthRequest } from '../middleware/auth.js'
 import { resolveCorsOrigins } from '../lib/install-defaults.js'
 import { publicCardUrl, resolvePublicBaseUrl } from '../lib/public-url.js'
+import { resolveBrandName } from '../services/branding-config.js'
 
 export const MCP_PATH = '/api/mcp'
 /** Header stamped on forwarded REST calls so attribution can tell MCP traffic apart. */
 export const MCP_CLIENT_HEADER = 'X-CC-Client'
 // The name is the contract the Grok Bot connector was registered under
 // (obj 716490) — keep it even though the server now does more than knowledge.
-export const MCP_SERVER_INFO = { name: 'command-center-knowledge', title: 'Command Center', version: '2.0.0' } as const
+// The display title is the install's brand name, read per handshake (white-label, obj 901037).
+export const MCP_SERVER_INFO = { name: 'command-center-knowledge', version: '2.0.0' } as const
 /** Newest first. An unknown client version is answered with the newest. */
 export const MCP_PROTOCOL_VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'] as const
 
@@ -63,7 +65,7 @@ const MAX_TEXT_CHARS = 20_000
 const MAX_BINARY_INLINE_BYTES = 300_000
 
 const SERVER_INSTRUCTIONS = [
-  'Command Center: a kanban board of objectives (cards) — each card runs one coding-agent session — plus ONE knowledge base (markdown pages: imports, wiki pages, saved answers, decisions) and files. Live data, nothing cached.',
+  'This server is a kanban board of objectives (cards) — each card runs one coding-agent session — plus ONE knowledge base (markdown pages: imports, wiki pages, saved answers, decisions) and files. Live data, nothing cached.',
   'Status flow: planning → queue → working → ai_review → review → done (or cancelled). review = Needs You (the human).',
   'READ BEFORE YOU WRITE. Each turn: get_attention (what needs a decision) → get_changes(since=<next_cursor you stored>) (what moved) → act on one card with get_objective / get_progress. Do not re-read the board with list_objectives every turn.',
   'Before creating: search_objectives — never duplicate a card, never create one just to ask for status. Follow-ups on existing work go through send_message.',
@@ -1239,7 +1241,7 @@ export const MCP_TOOLS: McpTool[] = [
       required: ['request_id'],
       properties: {
         request_id: { type: 'string', description: 'From list_secret_requests / get_attention, e.g. sr-123-APIFY_API_TOKEN' },
-        scope: { type: 'string', enum: ['workspace', 'global', 'workspace_user'], description: 'Where to store it. Default: the scope the card suggested. workspace = the card\'s organization; global = all of Command Center; workspace_user = this organization, your key owner only' },
+        scope: { type: 'string', enum: ['workspace', 'global', 'workspace_user'], description: 'Where to store it. Default: the scope the card suggested. workspace = the card\'s organization; global = the whole install; workspace_user = this organization, your key owner only' },
       },
     },
     run: async (a, rest) => {
@@ -1399,7 +1401,7 @@ async function handleMessage(msg: JsonRpcMessage, req: AuthRequest, rest: RestCa
       return rpcResult(id, {
         protocolVersion,
         capabilities: { tools: { listChanged: false } },
-        serverInfo: MCP_SERVER_INFO,
+        serverInfo: { ...MCP_SERVER_INFO, title: resolveBrandName() },
         instructions: SERVER_INSTRUCTIONS + legacy,
       })
     }

@@ -54,7 +54,7 @@ export function isOwnerBrowserSession(req: AuthRequest): boolean {
 function ownerOr403(req: AuthRequest, res: Response): boolean {
   if (isOwnerBrowserSession(req)) return true
   res.status(403).json({
-    error: 'Only the owner, signed in to Command Center in the browser, can issue or revoke an approval grant. A bot or an API key can never grant itself approvals.',
+    error: 'Only the owner, signed in to the app in the browser, can issue or revoke an approval grant. A bot or an API key can never grant itself approvals.',
     code: 'owner_only',
   })
   return false

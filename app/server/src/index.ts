@@ -4,7 +4,6 @@ import { createCsrfGuard, csrfGuardEnabled } from './middleware/csrf-guard.js'
 import { apiRateLimitPerMinute, createApiRateLimiter } from './middleware/api-rate-limit.js'
 import cors from 'cors'
 import { createServer } from 'http'
-import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { initDb, getDb } from './db/index.js'
@@ -13,6 +12,7 @@ import { startPoller } from './services/state-poller.js'
 import { logPreviewSpoolHealth } from './services/preview-spool.js'
 import authRouter from './routes/auth.js'
 import brandingRouter, { renderBrandedIndex } from './routes/branding.js'
+import { mountSpaFallback } from './lib/spa-fallback.js'
 import agentKeyWebhooksRouter from './routes/agent-key-webhooks.js'
 import { startAgentWebhooks } from './services/agent-webhooks.js'
 import { agentKeyGuard } from './middleware/agent-key-guard.js'
@@ -458,13 +458,8 @@ const clientDist = path.join(__dirname, '../../client/dist')
 // index: false — the SPA shell is served below with the install's brand name
 // and favicon injected, so the very first paint is white-labeled (obj 900543).
 app.use(express.static(clientDist, { index: false }))
-app.get('*', (_req, res) => {
-  fs.readFile(path.join(clientDist, 'index.html'), 'utf-8', (err, html) => {
-    if (err) { res.status(404).send('Frontend not built'); return }
-    res.setHeader('Cache-Control', 'no-cache')
-    res.type('html').send(renderBrandedIndex(html))
-  })
-})
+// Unmatched /api/* → JSON 404 (any method); every other GET → the app shell (obj 901031).
+mountSpaFallback(app, clientDist, renderBrandedIndex)
 
 // Initialize WebSocket
 initWebSocket(server)

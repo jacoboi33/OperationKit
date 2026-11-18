@@ -79,7 +79,7 @@ which is the signal to remove the marker. Do not delete or loosen these.
 
 | Test | Tracks |
 |---|---|
-| `api: unknown /api path returns a JSON 404` | #901031 |
+| `api: unknown /api path returns a JSON 404` | fixed by #901031 |
 | `api: bot names and descriptions carry no vendor name under a custom brand` | #901033 |
 | `bots page shows no vendor name under a custom brand`, `no vendor name on /agents under a custom brand` | #901033 |
 | `narrow screens: a parent card still shows its sub-cards` | fixed by #901198 (was PA-3) |

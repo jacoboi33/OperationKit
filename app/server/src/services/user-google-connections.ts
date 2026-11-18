@@ -347,7 +347,7 @@ export async function exchangeCode(code: string, client: OAuthClientConfig): Pro
     // it, so this means the grant is in a state we cannot use.
     return {
       ok: false,
-      error: 'Google did not return a refresh token. Remove Command Center at myaccount.google.com/permissions and reconnect.',
+      error: "Google did not return a refresh token. Remove this app's access at myaccount.google.com/permissions, then reconnect.",
     }
   }
   return {

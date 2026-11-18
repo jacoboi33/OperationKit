@@ -52,7 +52,7 @@ export function isPersonInBrowser(req: AuthRequest): boolean {
 function personOr403(req: AuthRequest, res: Response): boolean {
   if (isPersonInBrowser(req)) return true
   res.status(403).json({
-    error: 'Bulk triage is for a person signed in to Command Center in the browser. A bot approves one eligible card at a time (POST /api/objectives/:id/bot-approve).',
+    error: 'Bulk triage is for a person signed in to the app in the browser. A bot approves one eligible card at a time (POST /api/objectives/:id/bot-approve).',
     code: 'person_only',
   })
   return false

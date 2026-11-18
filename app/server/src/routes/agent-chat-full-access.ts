@@ -108,7 +108,7 @@ router.get('/agents/:slug/full-access', (req: AuthRequest, res) => {
 router.put('/agents/:slug/full-access/:workspace', (req: AuthRequest, res) => {
   if (!isOwnerBrowserSession(req)) {
     res.status(403).json({
-      error: 'Only an admin, signed in to Command Center in the browser, can change a bot\'s Full access. A bot or an API key can never give itself Full access.',
+      error: 'Only an admin, signed in to the app in the browser, can change a bot\'s Full access. A bot or an API key can never give itself Full access.',
       code: 'admin_only',
     })
     return

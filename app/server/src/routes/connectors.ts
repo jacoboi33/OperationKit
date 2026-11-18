@@ -24,6 +24,7 @@ import { getAccess, setAccess, parseAccessBody } from '../connectors/access.js'
 import { NOT_CONNECTED, type ConnectorDefinition, type ConnectOutcome } from '../connectors/types.js'
 import { buildClientMetadataDocument } from '../connectors/dcr-client.js'
 import { dcrRedirectUri } from '../connectors/dcr-routes.js'
+import { resolveBrandName } from '../services/branding-config.js'
 import { getOAuthClient, redirectUriFor } from '../services/generic-connector-oauth.js'
 import {
   clearSharedAppConfig,
@@ -52,7 +53,7 @@ router.get('/dcr-client-metadata/:id', async (req: Request, res: Response) => {
   }
   res.json(
     buildClientMetadataDocument({
-      clientName: `Command Center — ${def.name}`,
+      clientName: `${resolveBrandName()} — ${def.name}`,
       redirectUri: dcrRedirectUri(def.id),
       scope: def.dcr_scope,
     }),

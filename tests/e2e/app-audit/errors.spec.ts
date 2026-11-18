@@ -108,4 +108,4 @@ test('signed out: an app address shows the sign-in page, not an error', async ({
   await shot(page, info, 'signed-out')
 })
 
-// The unknown-/api-path bug (fix card #901031) is covered, as an expected-fail, in api.spec.ts.
+// The unknown-/api-path bug (fixed by card #901031) is covered in api.spec.ts.

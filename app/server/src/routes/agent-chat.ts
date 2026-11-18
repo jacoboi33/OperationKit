@@ -257,7 +257,7 @@ function enabledModelsOrEmpty() {
 /** Only a signed-in admin may change what a bot runs on — never an API key (a bot must not grant itself tools). */
 function adminSessionOr403(req: AuthRequest, res: Response): boolean {
   if (req.user?.role !== 'admin' || req.authVia !== 'session') {
-    res.status(403).json({ error: 'Only an admin signed in to Command Center can change a bot\'s settings (model, tools, workspace access, High Agency).' })
+    res.status(403).json({ error: 'Only an admin signed in to the app in the browser can change a bot\'s settings (model, tools, workspace access, High Agency).' })
     return false
   }
   return true
@@ -407,7 +407,7 @@ router.delete('/agents/:slug/config', (req: AuthRequest, res) => {
  */
 router.delete('/agents/:slug', (req: AuthRequest, res) => {
   if (req.user?.role !== 'admin' || req.authVia !== 'session') {
-    res.status(403).json({ error: 'Only an admin signed in to Command Center can delete a bot.' })
+    res.status(403).json({ error: 'Only an admin signed in to the app in the browser can delete a bot.' })
     return
   }
   const a = agentOr404(req, res)

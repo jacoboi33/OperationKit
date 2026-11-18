@@ -349,7 +349,7 @@ router.post('/builder/:id/tool', builderOnly, async (req: BuilderRequest, res: R
     result = await runOkit(args, JSON.stringify({ frontmatter: p.frontmatter, body: p.body }))
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    return res.status(503).json({ error: `The OperationKit Tools CLI is not available on this server (${msg.slice(0, 120)}).`, code: 'okit_unavailable' })
+    return res.status(503).json({ error: `The Tools CLI (okit) is not available on this server (${msg.slice(0, 120)}).`, code: 'okit_unavailable' })
   }
   let parsed: Record<string, unknown> = {}
   try { parsed = JSON.parse(result.stdout || '{}') as Record<string, unknown> } catch { parsed = { output: result.stdout.slice(0, 2000) } }
